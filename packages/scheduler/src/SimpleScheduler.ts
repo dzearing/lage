@@ -74,13 +74,11 @@ export class SimpleScheduler implements TargetScheduler {
    */
   async run(root: string, targetGraph: TargetGraph): Promise<SchedulerRunSummary> {
     const startTime: [number, number] = process.hrtime();
-
     const { continueOnError, logger, cacheProvider, shouldCache, shouldResetCache, hasher } = this.options;
     const { pool, abortController } = this;
-
     const { dependencies, targets } = targetGraph;
-    this.dependencies = dependencies;
 
+    this.dependencies = dependencies;
     this.targetsByPriority = sortTargetsByPriority([...targets.values()]);
     for (const target of targets.values()) {
       const targetRun = new WrappedTarget({
@@ -107,6 +105,14 @@ export class SimpleScheduler implements TargetScheduler {
     let error: string | undefined;
     let duration: [number, number] = [0, 0];
     let targetRunByStatus: TargetRunSummary;
+    const total = Array.from(this.targetRuns.values()).filter((t) => !t.target.hidden).length;
+
+    this.options.logger.info("Starting to run targets", {
+      type: "scheduler",
+      status: "running",
+      total,
+      startTime,
+    });
 
     try {
       await this.scheduleReadyTargets();
@@ -125,6 +131,19 @@ export class SimpleScheduler implements TargetScheduler {
       ) {
         results = "success";
       }
+
+      this.options.logger.info("Completed run", {
+        type: "scheduler",
+        status: "complete",
+        total,
+        duration,
+        failed: targetRunByStatus.failed.length,
+        aborted: targetRunByStatus.aborted.length,
+        pending: targetRunByStatus.pending.length,
+        running: targetRunByStatus.running.length,
+        skipped: targetRunByStatus.skipped.length,
+        success: targetRunByStatus.success.length,
+      });
     }
 
     return {

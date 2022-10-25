@@ -4,7 +4,7 @@ import { findNpmClient } from "@lage-run/find-npm-client";
 import { getConfig } from "../../config/getConfig";
 import { getMaxWorkersPerTask } from "../../config/getMaxWorkersPerTask";
 import { getPackageInfos, getWorkspaceRoot, PackageInfos } from "workspace-tools";
-import { initializeReporters, LogReporter } from "@lage-run/reporters";
+import { initializeReporters, InkReporter } from "@lage-run/reporters";
 import { SimpleScheduler } from "@lage-run/scheduler";
 import { TargetGraph } from "@lage-run/target-graph";
 import createLogger, { Logger, LogLevel, Reporter } from "@lage-run/logger";
@@ -36,7 +36,7 @@ export async function watchAction(options: RunOptions, command: Command) {
 
   // Configure logger
   const logger = createLogger();
-  const reporter = new LogReporter({
+  const reporter = new InkReporter({
     grouped: true,
     logLevel: LogLevel[options.logLevel],
   });

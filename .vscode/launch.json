@@ -20,6 +20,17 @@
       "outFiles": ["${workspaceFolder}/**/*.js"],
       "args": ["--runInBand", "${fileBasenameNoExtension}"],
       "sourceMaps": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Lage/Cloudpack",
+      "skipFiles": ["<node_internals>/**"],
+      "cwd": "${workspaceFolder}/../cloudpack",
+      "program": "${workspaceFolder}/packages/cli/lib/cli.js",
+      "args": ["build", "--reporter", "ink", "--no-cache"],
+      "console": "integratedTerminal",
+      "sourceMaps": true
     }
   ]
 }
